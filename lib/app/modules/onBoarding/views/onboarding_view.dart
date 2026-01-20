@@ -14,9 +14,8 @@ class OnboardingView extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Align(
                 alignment: Alignment.topCenter,
@@ -26,19 +25,20 @@ class OnboardingView extends StatelessWidget {
                   height: 50,
                 ),
               ),
+              SizedBox(height: 20),
               ClipRRect(
                 borderRadius: BorderRadius.circular(0),
                 child: Image.asset(
                   'assets/images/gulai_ayamon.png',
-                  width: 300,
-                  height: 300,
+                  width: 280,
+                  height: 280,
                   fit: BoxFit.cover,
                 ),
               ),
+              SizedBox(height: 30),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
                   Text(
                     'Selamat Datang!',
                     style: TextStyle(
@@ -54,6 +54,7 @@ class OnboardingView extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 20),
               Obx(() {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -77,122 +78,128 @@ class OnboardingView extends StatelessWidget {
                   ),
                 );
               }),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Tombol Kembali
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(), // Tetap berbentuk lingkaran
-                      padding: EdgeInsets.all(23), // Ukuran padding lebih besar
-                      backgroundColor: Colors.grey[350],
-                    ),
-                    onPressed: controller.previousPage,
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 28, // Ikon lebih besar
-                    ),
-                  ),
-                  const SizedBox(width: 20), // Jarak antara tombol
-                  // Tombol Geser
-                  GestureDetector(
-                    onHorizontalDragUpdate: (details) {
-                      // Hitung batas maksimal geser
-                      double maxDrag =
-                          MediaQuery.of(context).size.width * 0.5 - 48;
-                      double newPosition =
-                          controller.dragPosition.value + details.delta.dx;
-
-                      // Perbarui posisi hanya jika dalam batas
-                      if (newPosition >= 0 && newPosition <= maxDrag) {
-                        controller.dragPosition.value = newPosition;
-                      } else if (newPosition < 0) {
-                        controller.dragPosition.value =
-                            0; // Tidak melebihi kiri
-                      } else if (newPosition > maxDrag) {
-                        controller.dragPosition.value =
-                            maxDrag; // Tidak melebihi kanan
-                      }
-                    },
-                    onHorizontalDragEnd: (details) {
-                      double maxDrag =
-                          MediaQuery.of(context).size.width * 0.5 - 48;
-                      if (controller.dragPosition.value >= maxDrag) {
-                        // Navigasi ke halaman berikutnya jika mencapai ujung
-                        Get.toNamed('/register');
-                      } else {
-                        // Reset posisi jika tidak mencapai ujung
-                        controller.dragPosition.value = 0;
-                      }
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width *
-                          0.6, // Lebar tombol abu-abu
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius:
-                            BorderRadius.circular(50), // Sudut melengkung
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.grey[500]!, // Warna lebih gelap di atas
-                            Colors.grey[350]!, // Warna dasar di tengah
-                            Colors.grey[300]!, // Warna lebih terang di bawah
-                          ],
-                          stops: [0.0, 0.1, 1.0], // Distribusi gradien
-                        ),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Tombol Kembali
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(20),
+                        backgroundColor: Colors.grey[350],
                       ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Teks "Mulai"
-                          Positioned.fill(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Mulai",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                      onPressed: controller.previousPage,
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    // Tombol Geser
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final buttonWidth = 60.0;
+                          final maxDrag =
+                              constraints.maxWidth - buttonWidth - 10;
+
+                          return GestureDetector(
+                            onHorizontalDragUpdate: (details) {
+                              double newPosition =
+                                  controller.dragPosition.value +
+                                      details.delta.dx;
+
+                              // Perbarui posisi hanya jika dalam batas
+                              if (newPosition >= 0 && newPosition <= maxDrag) {
+                                controller.dragPosition.value = newPosition;
+                              } else if (newPosition < 0) {
+                                controller.dragPosition.value = 0;
+                              } else if (newPosition > maxDrag) {
+                                controller.dragPosition.value = maxDrag;
+                              }
+                            },
+                            onHorizontalDragEnd: (details) {
+                              if (controller.dragPosition.value >=
+                                  maxDrag * 0.8) {
+                                // Navigasi ke halaman berikutnya jika mencapai 80% dari ujung
+                                Get.toNamed('/register');
+                              } else {
+                                // Reset posisi jika tidak mencapai ujung
+                                controller.dragPosition.value = 0;
+                              }
+                            },
+                            child: Container(
+                              height: 70,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(50),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.grey[500]!,
+                                    Colors.grey[350]!,
+                                    Colors.grey[300]!,
+                                  ],
+                                  stops: [0.0, 0.1, 1.0],
                                 ),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Teks "Mulai"
+                                  Positioned.fill(
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "Mulai",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  // Bulatan merah dengan panah
+                                  Obx(() {
+                                    return Positioned(
+                                      left: controller.dragPosition.value + 5,
+                                      child: Container(
+                                        width: buttonWidth,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFC70039),
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black26,
+                                              blurRadius: 5,
+                                              offset: Offset(2, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Icon(
+                                          Icons.arrow_forward,
+                                          color: Colors.white,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ],
                               ),
                             ),
-                          ),
-                          // Bulatan merah dengan panah
-                          Obx(() {
-                            return Positioned(
-                              left: controller.dragPosition.value + 10,
-                              child: Container(
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFC70039),
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 5,
-                                      offset: Offset(2, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
+                          );
+                        },
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
